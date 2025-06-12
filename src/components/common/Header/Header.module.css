@@ -1,0 +1,65 @@
+.appHeader {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logoIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.headerSpacer {
+  width: 44px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.headerIcon {
+  font-size: var(--font-size-xl);
+}
+
+.headerTitle h1 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background-color: transparent;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  color: var(--text-primary);
+}
+
+.iconButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.iconButton:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}

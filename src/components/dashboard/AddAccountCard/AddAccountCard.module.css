@@ -1,0 +1,19 @@
+.addAccountCard > button {
+    background-color: transparent;
+    border-style: dashed;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  .addAccountCard > button:hover {
+    background-color: rgba(0, 122, 255, 0.05);
+    border-color: var(--primary-color);
+  }
+  
+  .addAccountCard > button > div:first-child {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+  
+  .addAccountCard > button > .accountName {
+    color: var(--primary-color);
+  }

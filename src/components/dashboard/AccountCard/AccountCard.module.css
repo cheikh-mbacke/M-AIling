@@ -1,0 +1,43 @@
+.accountCard {
+    background-color: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg) var(--spacing-md);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: all var(--transition-fast);
+    min-height: 120px;
+    width: 100%;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .accountCard:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .accountCard:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .accountIcon {
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .accountName {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
