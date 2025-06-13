@@ -1,0 +1,52 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+  /* border: 1px solid red; - Supprimer en production */
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  flex-shrink: 0;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 20;
+}
+
+.content {
+  flex: 1;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Support iOS momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Empêcher le bounce */
+  overscroll-behavior: contain;
+}
+
+.footer {
+  flex-shrink: 0;
+  background-color: var(--surface);
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+/* Responsive fixes pour mobile */
+@media screen and (max-width: 768px) {
+  .screen {
+    /* Sur mobile, forcer la hauteur exacte */
+    height: var(--viewport-height, 100vh) !important;
+    max-height: var(--viewport-height, 100vh) !important;
+  }
+}
+
+/* PWA et Standalone mode */
+@media (display-mode: standalone) {
+  .screen {
+    /* En mode PWA, utiliser toute la hauteur disponible */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

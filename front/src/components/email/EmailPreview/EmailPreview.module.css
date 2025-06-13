@@ -1,0 +1,161 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  /* S'assurer que le container prend toute la hauteur disponible */
+  min-height: 100%;
+  flex: 1;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+}
+
+.actionButton:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Message */
+.reformulatedMessage {
+  background-color: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--border-radius-md);
+  min-height: 200px;
+  position: relative;
+}
+
+.messageContent {
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.messageContent p {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.messageContent p:last-child {
+  margin-bottom: 0;
+}
+
+.emptyLine {
+  height: var(--spacing-sm);
+}
+
+/* Edit Textarea */
+.editTextarea {
+  width: 100%;
+  min-height: 200px;
+  max-height: 400px; /* Hauteur par défaut */
+  resize: vertical;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--surface);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  line-height: 1.6;
+  transition: height var(--transition-base);
+  -webkit-appearance: none;
+  /* Support iOS momentum scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hauteur réduite quand le clavier virtuel est ouvert */
+.editTextarea.keyboardOpen {
+  max-height: 150px; /* Hauteur réduite pour laisser place au clavier */
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  height: 200px;
+  color: var(--text-secondary);
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Footer - IMPORTANT: Colle le footer en bas */
+.footer {
+  margin-top: auto; /* Cette propriété pousse le footer vers le bas */
+  padding-top: var(--spacing-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .actionButtons {
+    align-self: flex-end;
+  }
+}

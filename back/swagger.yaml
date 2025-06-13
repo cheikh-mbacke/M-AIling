@@ -1,0 +1,912 @@
+# ============================================================================
+# 📁 swagger.yaml - Documentation API M'ailing (VERSION CLAIRE)
+# ============================================================================
+
+openapi: 3.0.0
+info:
+  title: M'ailing API
+  version: 1.0.0
+  description: API de reformulation de messages avec IA et gestion d'utilisateurs
+  contact:
+    name: Support M'ailing
+    email: support@mailing.com
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+  - url: https://your-api-domain.com
+    description: Production server
+
+# ============================================================================
+# Sécurité
+# ============================================================================
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Entrez votre token JWT
+
+  # ============================================================================
+  # Schémas de données
+  # ============================================================================
+  
+  schemas:
+    # Modèle utilisateur
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID unique de l'utilisateur
+        email:
+          type: string
+          format: email
+          description: Adresse email de l'utilisateur
+        name:
+          type: string
+          description: Nom de l'utilisateur
+        createdAt:
+          type: string
+          format: date-time
+          description: Date de création du compte
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date de dernière mise à jour
+
+    # Requêtes d'authentification
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+          description: Adresse email de l'utilisateur
+        password:
+          type: string
+          minLength: 6
+          description: Mot de passe (minimum 6 caractères)
+        name:
+          type: string
+          description: Nom complet de l'utilisateur
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: Adresse email de l'utilisateur
+        password:
+          type: string
+          description: Mot de passe de l'utilisateur
+
+    AuthResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Message de confirmation
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          description: Token JWT pour l'authentification
+
+    # Configuration de reformulation
+    ReformulateConfig:
+      type: object
+      required:
+        - language
+        - tone
+        - length
+      properties:
+        language:
+          type: string
+          enum: [FR, EN, ES, DE, IT, PT, NL, RU, ZH, JA]
+          description: Code de la langue de sortie
+        tone:
+          type: string
+          enum: 
+            - Professionnel
+            - Formelle
+            - Amical
+            - Familier
+            - Expert
+            - Confiant
+            - Aimant
+            - Prudent
+            - Affligeant
+            - Excitant
+            - Inspirant
+            - Informatif
+            - Direct
+            - Attentionné
+            - Surprise
+            - Persuasif
+            - Joyeux
+          description: Ton de la reformulation
+        length:
+          type: string
+          enum: [Court, Moyen, Long]
+          description: Longueur souhaitée de la reformulation
+        emoji:
+          type: boolean
+          description: Inclure des emojis dans la reformulation
+
+    # Requête de reformulation
+    ReformulateRequest:
+      type: object
+      required:
+        - message
+        - config
+      properties:
+        message:
+          type: string
+          description: Message à reformuler
+          maxLength: 5000
+        config:
+          $ref: '#/components/schemas/ReformulateConfig'
+
+    # Réponse de reformulation
+    ReformulateResponse:
+      type: object
+      properties:
+        reformulated:
+          type: string
+          description: Message reformulé par l'IA
+        metadata:
+          type: object
+          properties:
+            tokensUsed:
+              type: integer
+              description: Nombre de tokens utilisés par OpenAI
+            originalLength:
+              type: integer
+              description: Longueur du message original
+            reformulatedLength:
+              type: integer
+              description: Longueur du message reformulé
+            config:
+              $ref: '#/components/schemas/ReformulateConfig'
+            model:
+              type: string
+              description: Modèle IA utilisé
+
+    # Styles disponibles
+    StylesResponse:
+      type: object
+      properties:
+        languages:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Code de la langue
+              name:
+                type: string
+                description: Nom de la langue
+          description: Langues disponibles pour la reformulation
+        tones:
+          type: array
+          items:
+            type: string
+          description: Tons disponibles pour la reformulation
+        lengths:
+          type: array
+          items:
+            type: string
+          description: Longueurs disponibles pour la reformulation
+
+    # Gestion d'erreurs
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Message d'erreur principal
+        details:
+          type: string
+          description: Détails spécifiques de l'erreur
+
+    # Modèles pour les brouillons
+    Draft:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID unique du brouillon
+        userId:
+          type: string
+          description: ID de l'utilisateur propriétaire
+        title:
+          type: string
+          description: Titre du brouillon
+        originalMessage:
+          type: string
+          description: Message original avant reformulation
+        reformulatedMessage:
+          type: string
+          description: Message reformulé par l'IA
+        to:
+          type: string
+          description: Adresse email du destinataire
+        subject:
+          type: string
+          description: Sujet de l'email
+        styleConfig:
+          $ref: '#/components/schemas/ReformulateConfig'
+        isReformulated:
+          type: boolean
+          description: Indique si le message a été reformulé
+        createdAt:
+          type: string
+          format: date-time
+          description: Date de création du brouillon
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date de dernière modification
+
+    CreateDraftRequest:
+      type: object
+      required:
+        - originalMessage
+      properties:
+        title:
+          type: string
+          description: Titre du brouillon
+        originalMessage:
+          type: string
+          description: Message à sauvegarder
+          maxLength: 5000
+        to:
+          type: string
+          format: email
+          description: Destinataire de l'email
+        subject:
+          type: string
+          description: Sujet de l'email
+          maxLength: 200
+        styleConfig:
+          $ref: '#/components/schemas/ReformulateConfig'
+        autoReformulate:
+          type: boolean
+          description: Reformuler automatiquement à la création
+
+    UpdateDraftRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nouveau titre
+        originalMessage:
+          type: string
+          description: Nouveau message original
+          maxLength: 5000
+        reformulatedMessage:
+          type: string
+          description: Message reformulé
+        to:
+          type: string
+          format: email
+          description: Destinataire de l'email
+        subject:
+          type: string
+          description: Sujet de l'email
+          maxLength: 200
+        styleConfig:
+          $ref: '#/components/schemas/ReformulateConfig'
+
+    DraftsResponse:
+      type: object
+      properties:
+        drafts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Draft'
+        pagination:
+          type: object
+          properties:
+            currentPage:
+              type: integer
+              description: Page actuelle
+            totalPages:
+              type: integer
+              description: Nombre total de pages
+            totalDrafts:
+              type: integer
+              description: Nombre total de brouillons
+            hasNextPage:
+              type: boolean
+              description: Y a-t-il une page suivante
+            hasPrevPage:
+              type: boolean
+              description: Y a-t-il une page précédente
+
+# ============================================================================
+# Tags pour organiser la documentation
+# ============================================================================
+
+tags:
+  - name: Authentication
+    description: Gestion de l'authentification des utilisateurs
+  - name: Reformulation
+    description: Reformulation de messages avec IA
+  - name: Drafts
+    description: Gestion des brouillons d'emails
+  - name: Health
+    description: Santé de l'API
+
+# ============================================================================
+# Endpoints de l'API
+# ============================================================================
+
+paths:
+  # ============================================================================
+  # Authentification
+  # ============================================================================
+  
+  /api/auth/register:
+    post:
+      summary: Créer un nouveau compte utilisateur
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              exemple_utilisateur:
+                summary: Exemple d'inscription
+                value:
+                  email: "utilisateur@example.com"
+                  password: "motdepasse123"
+                  name: "Jean Dupont"
+      responses:
+        '201':
+          description: Compte créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email déjà utilisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      summary: Se connecter avec email et mot de passe
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              exemple_connexion:
+                summary: Exemple de connexion
+                value:
+                  email: "utilisateur@example.com"
+                  password: "motdepasse123"
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Email ou mot de passe incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/logout:
+    post:
+      summary: Se déconnecter
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Déconnexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message de confirmation
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/me:
+    get:
+      summary: Récupérer les informations de l'utilisateur connecté
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Informations utilisateur récupérées
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================================
+  # Reformulation
+  # ============================================================================
+  
+  /api/reformulate:
+    post:
+      summary: Reformuler un message avec l'IA
+      description: Reformule un message selon le style, la langue et la longueur spécifiés
+      tags: [Reformulation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReformulateRequest'
+            examples:
+              exemple_professionnel:
+                summary: Reformulation professionnelle
+                value:
+                  message: "salut, j'ai un souci avec mon ordi"
+                  config:
+                    language: "FR"
+                    tone: "Professionnel"
+                    length: "Moyen"
+                    emoji: false
+              exemple_amical:
+                summary: Reformulation amicale
+                value:
+                  message: "je voulais te dire merci pour ton aide"
+                  config:
+                    language: "FR"
+                    tone: "Amical"
+                    length: "Court"
+                    emoji: true
+      responses:
+        '200':
+          description: Message reformulé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReformulateResponse'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Trop de requêtes (rate limiting)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service OpenAI indisponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/reformulate/styles:
+    get:
+      summary: Récupérer les styles de reformulation disponibles
+      description: Retourne la liste des langues, tons et longueurs disponibles
+      tags: [Reformulation]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Styles récupérés avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StylesResponse'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/reformulate/test:
+    post:
+      summary: Tester la reformulation sans IA
+      description: Endpoint de test pour la reformulation sans utiliser OpenAI (pour développement)
+      tags: [Reformulation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message, config]
+              properties:
+                message:
+                  type: string
+                  description: Message à tester
+                config:
+                  type: object
+                  properties:
+                    tone:
+                      type: string
+                      description: Ton de la reformulation
+            examples:
+              exemple_test:
+                summary: Test simple
+                value:
+                  message: "salut ça va"
+                  config:
+                    tone: "Professionnel"
+      responses:
+        '200':
+          description: Test de reformulation réussi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reformulated:
+                    type: string
+                    description: Message reformulé en mode test
+                  metadata:
+                    type: object
+                    description: Métadonnées du test
+                    properties:
+                      originalLength:
+                        type: integer
+                        description: Longueur du message original
+                      reformulatedLength:
+                        type: integer
+                        description: Longueur du message reformulé
+                      config:
+                        type: object
+                        description: Configuration utilisée
+                      mode:
+                        type: string
+                        description: Mode de test
+
+  # ============================================================================
+  # Brouillons
+  # ============================================================================
+  
+  /api/drafts:
+    get:
+      summary: Récupérer la liste des brouillons
+      description: Retourne tous les brouillons de l'utilisateur connecté avec pagination
+      tags: [Drafts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Numéro de page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Nombre d'éléments par page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: Brouillons récupérés avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftsResponse'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      summary: Créer un nouveau brouillon
+      description: Crée un brouillon d'email avec possibilité de reformulation automatique
+      tags: [Drafts]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDraftRequest'
+            examples:
+              brouillon_simple:
+                summary: Brouillon simple
+                value:
+                  title: "Email pour le client"
+                  originalMessage: "salut, j'ai un problème avec la commande"
+                  to: "client@example.com"
+                  subject: "Problème commande"
+              brouillon_auto_reformule:
+                summary: Avec reformulation automatique
+                value:
+                  originalMessage: "salut, j'ai un souci avec mon ordi"
+                  autoReformulate: true
+                  styleConfig:
+                    language: "FR"
+                    tone: "Professionnel"
+                    length: "Moyen"
+                    emoji: false
+      responses:
+        '201':
+          description: Brouillon créé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message de confirmation
+                  draft:
+                    $ref: '#/components/schemas/Draft'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/drafts/{id}:
+    put:
+      summary: Mettre à jour un brouillon
+      description: Modifie un brouillon existant
+      tags: [Drafts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du brouillon à modifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDraftRequest'
+            examples:
+              modification_simple:
+                summary: Modification du titre et message
+                value:
+                  title: "Nouveau titre"
+                  originalMessage: "Message modifié"
+                  subject: "Nouveau sujet"
+      responses:
+        '200':
+          description: Brouillon mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message de confirmation
+                  draft:
+                    $ref: '#/components/schemas/Draft'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Brouillon introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      summary: Supprimer un brouillon
+      description: Supprime définitivement un brouillon
+      tags: [Drafts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du brouillon à supprimer
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Brouillon supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message de confirmation
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Brouillon introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/drafts/{id}/reformulate:
+    post:
+      summary: Reformuler un brouillon existant
+      description: Reformule le message d'un brouillon avec l'IA
+      tags: [Drafts]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du brouillon à reformuler
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                styleConfig:
+                  $ref: '#/components/schemas/ReformulateConfig'
+            examples:
+              reformulation_personnalisee:
+                summary: Avec nouvelle configuration
+                value:
+                  styleConfig:
+                    language: "FR"
+                    tone: "Amical"
+                    length: "Court"
+                    emoji: true
+      responses:
+        '200':
+          description: Brouillon reformulé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message de confirmation
+                  draft:
+                    $ref: '#/components/schemas/Draft'
+                  metadata:
+                    type: object
+                    description: Métadonnées de la reformulation
+        '401':
+          description: Token invalide ou manquant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Brouillon introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Service OpenAI indisponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================================
+  # Santé de l'API
+  # ============================================================================
+  
+  /api/health:
+    get:
+      summary: Vérifier la santé de l'API
+      description: Endpoint pour vérifier que l'API fonctionne correctement
+      tags: [Health]
+      responses:
+        '200':
+          description: API fonctionnelle
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statut de l'API
+                  message:
+                    type: string
+                    description: Message de statut
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: Horodatage de la vérification

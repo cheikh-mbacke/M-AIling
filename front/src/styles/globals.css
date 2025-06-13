@@ -1,0 +1,86 @@
+@import './variables.css';
+
+/* Reset et styles globaux */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Support pour hauteur dynamique */
+:root {
+  /* Hauteur dynamique du viewport - sera mise à jour par JavaScript */
+  --viewport-height: 100vh;
+}
+
+/* Désactiver le bounce effect sur iOS/Safari */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  /* Empêcher le zoom sur les inputs sur iOS */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  /* Hauteur dynamique */
+  height: 100vh;
+  height: var(--viewport-height, 100vh);
+}
+
+body {
+  /* border: 1px solid red; - Supprimer en production */
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  background-color: var(--background);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Comportement natif sur mobile */
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  /* Hauteur dynamique */
+  min-height: 100vh;
+  min-height: var(--viewport-height, 100vh);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: none;
+  /* Hauteur dynamique */
+  min-height: 100vh;
+  min-height: var(--viewport-height, 100vh);
+}
+
+/* Styles spécifiques pour PWA */
+@media (display-mode: standalone) {
+  body {
+    /* Masquer la barre d'adresse sur PWA */
+    overflow-x: hidden;
+  }
+}
+
+/* Désactiver le pull-to-refresh sur Chrome mobile */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Utilitaires */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Classe utilitaire pour les composants fullscreen */
+.fullscreen-container {
+  height: var(--viewport-height, 100vh);
+  max-height: var(--viewport-height, 100vh);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+}

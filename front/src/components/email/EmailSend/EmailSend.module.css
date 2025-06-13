@@ -1,0 +1,378 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  /* SOLUTION DE CONTOURNEMENT: Hauteur fixe basée sur le viewport initial */
+  min-height: calc(100vh - 120px); /* 120px = header + footer estimés */
+  flex: 1;
+}
+
+/* Alternative plus robuste pour mobile */
+@supports (-webkit-touch-callout: none) {
+  /* Styles spécifiques iOS */
+  .container {
+    min-height: calc(100vh - 140px);
+    /* Forcer le container à occuper l'espace même avec clavier */
+    height: calc(100vh - 140px);
+  }
+}
+
+/* Pour Android Chrome */
+@media screen and (max-width: 768px) {
+  .container {
+    /* Hauteur fixe conservative pour éviter les problèmes de viewport */
+    min-height: 60vh;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  /* Réduire l'espacement sur mobile pour optimiser l'espace */
+  .container {
+    gap: var(--spacing-md);
+  }
+  
+  .field {
+    gap: var(--spacing-xs);
+  }
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 24px; /* Hauteur minimale stable */
+}
+
+.label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1; /* Prend l'espace disponible */
+}
+
+.generateButton,
+.attachButton {
+  flex-shrink: 0; /* Ne se réduit jamais */
+  white-space: nowrap; /* Texte sur une seule ligne */
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--surface);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.readOnlyField {
+  padding: var(--spacing-md);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdownButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.dropdownButton:hover {
+  border-color: var(--primary);
+}
+
+.accountInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.accountIcon {
+  font-size: var(--font-size-xl);
+}
+
+.accountDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.accountName {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+
+.accountEmail {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.rotated {
+  transform: rotate(180deg);
+  transition: transform var(--transition-fast);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  margin-top: var(--spacing-xs);
+}
+
+.dropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  text-align: left;
+}
+
+.dropdownItem:hover {
+  background-color: var(--surface-hover);
+}
+
+.dropdownItem:first-child {
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.dropdownItem:last-child {
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+}
+
+.checkmark {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* Message Preview */
+.messagePreview {
+  padding: var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+
+.messagePreview p {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.messagePreview p:last-child {
+  margin-bottom: 0;
+}
+
+.truncated {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.generateButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0; /* Ne se réduit jamais */
+  white-space: nowrap; /* Texte sur une seule ligne */
+}
+
+.generateButton:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.attachButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0; /* Ne se réduit jamais */
+  white-space: nowrap; /* Texte sur une seule ligne */
+}
+
+.attachButton:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Attachments */
+.attachmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.attachment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.attachmentInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.attachmentName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.attachmentSize {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.removeAttachment {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.removeAttachment:hover {
+  background-color: #ff4444;
+  color: white;
+}
+
+/* Footer - IMPORTANT: Colle le footer en bas */
+.footer {
+  margin-top: auto; /* Cette propriété pousse le footer vers le bas */
+  padding-top: var(--spacing-md);
+}
+
+.sendingState {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive - Comportement plus stable */
+@media (max-width: 768px) {
+  .labelRow {
+    gap: var(--spacing-xs); /* Espacement réduit sur mobile */
+  }
+  
+  .generateButton,
+  .attachButton {
+    padding: var(--spacing-xs) var(--spacing-sm); /* Padding réduit sur mobile */
+    font-size: var(--font-size-xs); /* Texte plus petit sur mobile */
+  }
+}
+
+/* Seulement pour les très petits écrans (< 380px) */
+@media (max-width: 380px) {
+  .labelRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .generateButton,
+  .attachButton {
+    align-self: flex-end;
+    font-size: var(--font-size-sm);
+  }
+}
